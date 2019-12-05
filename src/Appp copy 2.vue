@@ -1,12 +1,14 @@
- 
+ <!-- 
+ 后台的json数据写在了data里面,也就是写了一份假数据
+ 完成了搜索功能,有一些细节可以跟着自己的需求进行更改
+ 我写了两个函数: 
+  1. 当点击的时候返回结果
+  2. 当触发的时候直接返回解决
+ 默认先启动的是app.vue页面
+  -->
 <template>
   <div class="safetyInfo">
-    <el-input 
-    placeholder="请输入详细地址/门牌号/" 
-    v-model="search" 
-    @input="submitFun" 
-    ref="searchInput">
-    </el-input>
+    <el-input placeholder="请输入详细地址/门牌号/" v-model="search" @input="submitFun" ref="searchInput"></el-input>
     <el-button @click="search1">搜索</el-button>
     <ul v-show="family" v-for="(list,index) in searchData" :key="index">
       <li>
@@ -22,9 +24,10 @@ export default {
   name: "HelloWorld",
   data() {
     return {
-      family:false,
-      search: "",
-      searchData: "",
+      family: false,
+      search: "", //输入框内容
+      searchData: "", //渲染的数据
+      //假数据
       products: [
         //假数据
         {
@@ -94,40 +97,41 @@ export default {
     };
   },
   created: function() {
-      this.family = false
+    // 调用
     this.inintData();
   },
   methods: {
     inintData() {
+      // 模仿了和后台交互,后台的接口接收到这个数据里进行渲染
       this.searchData = this.products;
-       this.family = false
     },
     search1() {
-      console.log('11')
-         
+       // 获取当前输入框内容
       let search = this.search;
+      // searchData 过滤完的数据
+      // products 过滤全部的数据
       this.searchData = this.products.filter(function(product) {
         // console.log("过滤", product);
+          // 过滤这两条数据
         let searchField = {
           phoneName: product.phoneName,
           ascriptionPhone: product.ascriptionPhone
         };
-     
+              // 判断对象(searchField)里的key是否满足条件,满足条件返回数据
         return Object.keys(searchField).some(function(key) {
           // console.log("key值", key);
-             var s =  String(product[key]).toLowerCase().indexOf(search)> -1
-          return s;
+          var num =product[key].indexOf(search.trim()) > -1;
+          return num;
         });
       });
-       if(this.search == '') {
-         this.family = false
-         console.log('00')
-      }else {
-              this.family = true
+      // 当输入框为空的时就隐藏所有数据,反之显示数据
+      if (this.search == "") {
+        this.family = false;
+      } else {
+        this.family = true;
       }
     },
     submitFun() {
-     
       let search = this.search;
       this.searchData = this.products.filter(function(product) {
         // console.log("过滤", product);
@@ -135,18 +139,18 @@ export default {
           phoneName: product.phoneName,
           ascriptionPhone: product.ascriptionPhone
         };
-     
-        // return Object.keys(searchField).some(function(key) {
-        //   // console.log("key值", key);
-        //      var s =  String(product[key]).toLowerCase().indexOf(search)> -1
-        //   return s;
-        // });
+
+        return Object.keys(searchField).some(function(key) {
+          // console.log("key值", key);
+             var s =  String(product[key]).toLowerCase().indexOf(search.trim())> -1
+          return s;
+        });
       });
-       if(this.search == '') {
-         this.family = false
-         console.log('00')
-      }else {
-              this.family = true
+      // 当输入框为空的时就隐藏所有数据,反之显示数据
+      if (this.search == "") {
+        this.family = false;
+      } else {
+        this.family = true;
       }
     }
   }

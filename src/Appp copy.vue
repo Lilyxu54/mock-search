@@ -1,10 +1,6 @@
 <!--
- * @Author: your name
- * @Date: 2019-12-03 15:37:45
- * @LastEditTime: 2019-12-04 10:46:08
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \mock\src\App.vue
+ vue实现搜索并高亮的效果and功能
+ 这个自己看吧,我就不备注了,这个代码写的简单明了
  -->
 <template>
   <div id="app">
@@ -23,25 +19,21 @@
       </div>
       <div class="content-box">
         <div class="content-card" v-for="(item ,index) in resultList" :key="index">
-          设备名称:
           <span v-html="item.name"></span>
           <span>
-            日期:
             <span v-html="item.date"></span>
           </span>
           <span>
-            地址:
             <span v-html="item.adress"></span>
           </span>
           <span>
-            类型:
             <span v-html="item.type"></span>
           </span>
         </div>
         <h2 v-if="isShowTip">没有搜索到匹配结果</h2>
       </div>
     </div>
-    <router-view />
+    <!-- <router-view />   -->
   </div>
 </template>
 <script>
@@ -58,47 +50,50 @@ export default {
     };
   },
   //首先得到数据，在created里面使用axios
-  created() {
-    // axios.get('json').then((res) =>{})
-    axios.get("/json").then(res => {
-      //将json文件中的数据赋值给data里面的deviceList
-      this.deviceList = res.data.data.deviceList;
-    });
-  },
+  created() {},
   methods: {
     search() {
       if (this.keyword == "") {
         //如果没有输入内容，不让往下执行
         return;
       }
-      this.resultList = []; //每次搜索对结果数组做初始化
-      this.deviceList.forEach(item => {
-        //把初始数据进行遍历
-        /**
-      下面是把初始数据中的每一条数据的四个字段分别去和输入的内容进行匹配，
-      如果某一字段中包含输入的内容，就往resultList中加
-    **/
-        if (
-          item.name.indexOf(this.keyword) > -1 ||
-          item.date.indexOf(this.keyword) > -1 ||
-          item.adress.indexOf(this.keyword) > -1 ||
-          item.type.indexOf(this.keyword) > -1
-        ) {
-          this.resultList.push(item);
-        }
-      });
-      if (this.resultList.length == 0) {
-        //如果没有匹配结果，就显示提示信息
-        this.isShowTip = true;
-      }
-      //将得到的每一条数据中的每一个字段进行处理,brightKeyword就是变高亮的方法
-      this.resultList.map(item => {
-        //遍历
-        item.name = this.brightKeyword(item.name);
-        item.date = this.brightKeyword(item.date);
-        item.adress = this.brightKeyword(item.adress);
-        item.type = this.brightKeyword(item.type);
-      }); //到这里search方法结束
+      // axios.get('json').then((res) =>{})
+      axios
+        .get("/json")
+        .then(res => {
+          //将json文件中的数据赋值给data里面的deviceList
+          this.deviceList = res.data.data.deviceList;
+        })
+        .then(() => {
+          this.resultList = []; //每次搜索对结果数组做初始化
+          this.deviceList.forEach(item => {
+            //把初始数据进行遍历
+            /**
+              下面是把初始数据中的每一条数据的四个字段分别去和输入的内容进行匹配，
+              如果某一字段中包含输入的内容，就往resultList中加
+            **/
+            if (
+              item.name.indexOf(this.keyword) > -1 ||
+              item.date.indexOf(this.keyword) > -1 ||
+              item.adress.indexOf(this.keyword) > -1 ||
+              item.type.indexOf(this.keyword) > -1
+            ) {
+              this.resultList.push(item);
+            }
+          });
+          if (this.resultList.length == 0) {
+            //如果没有匹配结果，就显示提示信息
+            this.isShowTip = true;
+          }
+          //将得到的每一条数据中的每一个字段进行处理,brightKeyword就是变高亮的方法
+          this.resultList.map(item => {
+            //遍历
+            item.name = this.brightKeyword(item.name);
+            item.date = this.brightKeyword(item.date);
+            item.adress = this.brightKeyword(item.adress);
+            item.type = this.brightKeyword(item.type);
+          }); //到这里search方法结束
+        });
     },
     // ---------------------------------
     brightKeyword(val) {
@@ -150,7 +145,7 @@ export default {
     // }
     post() {
       axios.post("/api/post").then(res => {
-         console.log(res.data);
+        console.log(res.data);
         if (res.data) {
           console.log(res.data);
           // alert(res.data.status + "," + res.data.code);
